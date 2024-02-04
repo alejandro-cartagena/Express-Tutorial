@@ -1,21 +1,77 @@
 const express = require('express')
 const app = express()
-const logger = require('./logger')
-const authorize = require('./authorize')
+let { people } = require('./data')
 
-// req => middleware => res
-app.use(express.static('./public'))
+// static assets
+app.use(express.static('./methods-public'))
+// parse data
+app.use(express.urlencoded({ extended: false }))
+// json
+app.use(express.json())
 
-app.get('/', (req, res) => {
-    res.send(`<h1>Home</h1>`)
+app.get('/api/people', (req, res) => {
+    res.status(200).json({success: true, data: people})
 })
 
-app.get('/about', (req, res) => {
-    res.send(`<h1>About</h1>`)
+app.post('/api/people', (req, res) => {
+    const { name } = req.body
+    if (!name) {
+        return res.status(400).json({ success: false, msg: 'Please provide a name value' })
+    }
+    res.status(201).json({ success: true, person: name })
 })
 
+app.post('/api/postman/people', (req, res) => {
+    const { name } = req.body
+    if (!name) {
+        return res.status(400).json({ success: false, msg: 'Please provide a name value' })
+    }
+    res.status(201).json({ success: true, data: [...people, name] })
+})
 
+app.post('/login', (req, res) => {
+    const { name } = req.body
+    if (name) {
+        res.status(200).send(`Welcome ${name}`)
+    }
+    res.status(401).send('Please provide credentials')
+})
+
+app.put('/api/people/:id', (req, res) => {
+    const { id } = req.params
+    const { name } = req.body
+    
+    const person = people.find((person) => person.id === Number(id))
+    if (!name) {
+        return res
+            .status(404)
+            .json({ success: false, msg: `No person with id ${id}` })
+    }
+    const newPeople = people.map((person) => {
+        if (person.id === Number(id)) {
+            person.name = name
+        }
+        return person
+    })
+    res.status(200).json({ success: true, data: newPeople })
+})
+
+app.delete('/api/people/:id', (req, res) => {
+    const { id } = req.params
+    
+    const person = people.find((person) => person.id === Number(id))
+
+    if (!person) {
+        return res
+            .status(404)
+            .json({ success: false, msg: `no person with id ${id}`})
+    }
+
+    people = people.filter((person) => person.id !== Number(id))
+    res.status(200).json({ success: true, data: people})
+
+})
 
 app.listen(5000, () => {
-    console.log("Server running on port 5000...")
+    console.log('Listening on port 5000...')
 })
