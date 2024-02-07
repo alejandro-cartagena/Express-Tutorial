@@ -1,37 +1,23 @@
-// const express = require('express')
-// const app = express()
-// const tasks = require('./routes/tasks')
+require('./db/connect')
+const express = require('express')
+const app = express()
+const tasks = require('./routes/tasks')
 
-// // Middleware
-// // app.use(express.static('./public'))
-// app.use(express.json())
+// Middleware
+// app.use(express.static('./public'))
+app.use(express.json())
 
-// // Routes
-// app.get('/hello', (req, res) => {
-//     res.send("HELLO WORLD")
-// })
+// Routes
+app.get('/hello', (req, res) => {
+    res.send("HELLO WORLD")
+})
 
-// app.use('/api/v1/tasks', tasks)
+app.use('/api/v1/tasks', tasks)
 
-// const port = 3000
-// app.listen(port, () => {
-//     console.log(`Listening on port ${port}...`)
-// })
-
-const x = 2;
-let y = 4;
-
-function update(arg) {
-  return Math.random() + y * arg;
-}
-
-y = 2;
-
-y = 3
-const result = update(x)
-
-console.log(result)
-
+const port = 3000
+app.listen(port, () => {
+    console.log(`Listening on port ${port}...`)
+})
 
 
 
