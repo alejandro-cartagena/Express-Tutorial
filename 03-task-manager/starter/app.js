@@ -20,6 +20,7 @@ app.use(notFound)
 app.use(errorHandlerMiddleware)
 
 console.log("APP.js")
+console.log("MORE TESTING")
 
 const port = process.env.PORT || 3000
 
